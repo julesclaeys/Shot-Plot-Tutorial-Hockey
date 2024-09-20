@@ -4,7 +4,7 @@ library(dplyr)
 library(gridExtra)
 
 # Ingesting file
-readfile <- read.csv("C:/Users/JulesClaeys/Desktop/shots_2023.csv")
+readfile <- read.csv()
 
 # filtering to only keep shots
 readfile <- filter(readfile, event == "GOAL" | event == "SHOT")
