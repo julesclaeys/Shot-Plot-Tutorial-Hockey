@@ -153,5 +153,97 @@ plot_list <- lapply(data_split, function(sub_data) {
       plot.margin = margin(0.2, 0.2, 0, 0, "cm")
     )
 
+# The Ice Rink
+ ![alt text](https://github.com/julesclaeys/Shot-Plot-Tutorial-Hockey/blob/main/icerink.png)
+
+
+ #The Dataset:
+
+ I obtained the shots data from: https://moneypuck.com/data.htm
+ I've previously used their data and it's reliable easy to use and comes with a data dictionary, I highly recommend it. This tutorial also works with API Data. 
+ I havce included the data I used in this github repository, feel free to use it or select another dataset. 
 
  
+#These Libraries are required:
+```
+  library(tidyverse)
+  library(ggforce)
+  library(dplyr)
+  library(gridExtra)
+```
+
+
+  # Ingesting file
+```
+  
+readfile <- read.csv("C:/Users/JulesClaeys/Desktop/shots_2023.csv")
+```
+
+Now that we have our data let's filter it, in this section you can change it to whichever team(s) or type of events you want to focus on. I am focusing on shots and goals by the Vancouver Canucks.
+
+# filtering to only keep shots
+```
+
+readfile <- filter(readfile, event == "GOAL" | event == "SHOT")
+```
+
+# Vancouver Canucks only, modify for any other team
+```
+readfile <- filter(readfile, homeTeamCode == "VAN" | awayTeamCode == "VAN")
+```
+
+# Subset columns
+```
+Canucks_data <- select(
+  readfile,
+  shotID,
+  arenaAdjustedXCord,
+  arenaAdjustedYCord,
+  lastEventCategory,
+  lastEventxCord_adjusted,
+  lastEventyCord_adjusted,
+  xGoal,
+  awayTeamCode,
+  homeTeamCode,
+  event
+)
+
+```
+I was looking to obtain a chart (ice rink) for each team the Canucks faced, for this I needed to find based on who was home or away
+
+# Find Canucks Opponent
+```
+Canucks_data <- Canucks_data %>%
+  mutate(
+    VAN = case_when(
+      homeTeamCode == "VAN" ~ "VAN",
+      awayTeamCode == "VAN" ~ "VAN",
+      TRUE ~ NA_character_
+    ),
+    Opponent = case_when(
+      homeTeamCode == "VAN" ~ awayTeamCode,
+      awayTeamCode == "VAN" ~ homeTeamCode,
+      TRUE ~ NA_character_
+    )
+  )
+```
+
+# Add position of the goal
+```
+Canucks_data <- Canucks_data %>%
+  mutate(
+    end_x = ifelse(arenaAdjustedXCord > 0, 89, -89),
+    end_y = 0
+  )
+
+# Split per opponent
+data_split <- split(Canucks_data, Canucks_data$Opponent)
+
+# Setting up colour values
+NHL_red <- "#FFCCD8" # Use #C8102E for original red in the rules, #FFE6EB for lighter hue
+NHL_blue <- "#CCE1FF" # Use #0033A0 for original blue in the rules, #E6EFFF for lighter hue
+NHL_light_blue <- "#CCF5FF" # Use #41B6E6 for original crease blue in the rules, #E6F9FF for lighter hue
+```
+# Turn the split data into small multiples
+```
+plot_list <- lapply(data_split, function(sub_data) {
