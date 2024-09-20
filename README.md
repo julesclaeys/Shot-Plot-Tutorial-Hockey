@@ -429,5 +429,5 @@ do.call(grid.arrange, c(plot_list, ncol = 4)) # Adjust ncol or nrow as needed
 ```
 
 Finally, we can plot the charts together as small multiples using grid.arrange. we can select more columns but here I decided 4 were enough for our 31 plots. 
-
- ![alt text](https://github.com/julesclaeys/Shot-Plot-Tutorial-Hockey/blob/main/Hockey_VAN_shots.pdf)
+ ![alt text](https://github.com/julesclaeys/Shot-Plot-Tutorial-Hockey/blob/main/Hockey_Van_Shots.png)
+ 
